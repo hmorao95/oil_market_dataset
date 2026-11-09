@@ -38,6 +38,8 @@ def write_raw(raw: Path, n: int = 24) -> None:
         "eia_us_petroleum_stocks": 1600000 + 1000 * rng,
         "gpr_gprh": 90 + rng,
         "weci": rng / 10,
+        "kilian_igrea": rng - 12,
+        "bh_world_ip": 50 + rng,
     }
     for name, values in series.items():
         core.save_raw(name, pd.Series(values, index=idx), raw)
@@ -103,8 +105,18 @@ def test_build_formulas(tmp_path: Path) -> None:
     assert now["oilstocks"] == pytest.approx(change)
     assert now["gprh"] == pytest.approx(100 * np.log(lvl["gprh"]))
     assert now["gecon"] == pytest.approx(lvl["weci"])
+    assert now["igrea"] == pytest.approx(lvl["igrea"])
+    assert now["wipi"] == pytest.approx(100 * np.log(lvl["world_ip"]))
     assert data.index.name == "date"
-    assert list(data.columns) == ["poil", "oilprod", "oilstocks", "gecon", "gprh"]
+    assert list(data.columns) == [
+        "poil",
+        "oilprod",
+        "oilstocks",
+        "gecon",
+        "igrea",
+        "wipi",
+        "gprh",
+    ]
 
 
 def test_write_and_read_outputs(tmp_path: Path) -> None:
@@ -161,6 +173,27 @@ def test_parse_gprh() -> None:
     )
     s = core.parse_gprh(xlsx(frame))
     assert s.loc["1900-02"] == pytest.approx(86.5)
+
+
+def test_parse_dated_column_reduces_to_months() -> None:
+    """Mid-month dates map to their month, and the header row is skipped."""
+    frame = pd.DataFrame(
+        [
+            ["Date", None],
+            [pd.Timestamp("2026-07-01"), 1.0],
+            [pd.Timestamp("2026-08-26"), 2.0],
+        ]
+    )
+    s = core.parse_dated_column(xlsx(frame, header=False))
+    assert list(s.index.astype(str)) == ["2026-07", "2026-08"]
+    assert s.tolist() == [1.0, 2.0]
+
+
+def test_parse_dated_column_no_dates() -> None:
+    """A sheet without dates raises SourceError."""
+    frame = pd.DataFrame([["Date", "value"], ["x", 1.0]])
+    with pytest.raises(core.SourceError, match="No dated rows"):
+        core.parse_dated_column(xlsx(frame, header=False))
 
 
 # --------------------------------------------------------------------------- #
@@ -230,6 +263,9 @@ def fake_get(url: str, params: dict[str, Any] | None = None, **_k: Any) -> FakeR
                 pd.DataFrame({"month": pd.to_datetime(["1988-01-01"]), "GPRH": [80.0]})
             )
         )
+    if url in {core.IGREA_URL, core.WIP_URL}:
+        dated = pd.DataFrame([["Date", None], [pd.Timestamp("1988-01-26"), 1.5]])
+        return FakeResponse(content=xlsx(dated, header=False))
     weci = pd.DataFrame([["", "Standardized GECON"], ["1988M1", 0.3]])
     return FakeResponse(content=xlsx(weci, header=False))
 
@@ -267,7 +303,11 @@ def test_cli_build_and_refresh(monkeypatch: pytest.MonkeyPatch, tmp_path: Path) 
 
     monkeypatch.setattr(core, "download", fake_download)
     assert "x.csv" in cli.refresh(str(raw), str(out), skip="bls_cpi, weci")
-    assert seen == [("bls_cpi", "weci")]
+    # python-fire hands ``--skip a,b`` over as a tuple.
+    cli.download(str(raw), skip=("bls_cpi", "weci"))
+    assert seen == [("bls_cpi", "weci"), ("bls_cpi", "weci")]
+    with pytest.raises(core.SourceError, match="Unknown --skip"):
+        cli.download(str(raw), skip="bls")
 
 
 def test_main_runs_fire(monkeypatch: pytest.MonkeyPatch) -> None:
