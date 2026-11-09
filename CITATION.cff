@@ -1,0 +1,65 @@
+cff-version: 1.2.0
+message: "If you use this dataset, please cite it as below, and cite the original sources listed in the README."
+title: "Oil market dataset: monthly real oil price, world oil production, global crude inventories, WECI and geopolitical risk, 1974m1–2026m10"
+type: dataset
+authors:
+  - family-names: "Morão"
+    given-names: "Hugo"
+version: "0.1.0"
+date-released: "2026-11-09"
+license: CC-BY-4.0
+repository-code: "https://github.com/hmorao95/oil_market_dataset"
+url: "https://github.com/hmorao95/oil_market_dataset"
+abstract: >-
+  Five monthly series for oil market VARs, from January 1974: the real
+  refiners' acquisition cost of imported crude oil, world crude oil
+  production growth, the change in global crude oil inventories (Kilian and
+  Murphy 2014), the world economic conditions indicator of Baumeister,
+  Korobilis and Lee (2022), and the historical geopolitical risk index of
+  Caldara and Iacoviello (2022). Built from public EIA, BLS, Baumeister and
+  Caldara-Iacoviello data, with the Python code used to download and build it.
+keywords:
+  - oil market
+  - crude oil
+  - inventories
+  - structural VAR
+  - EIA
+  - time series
+references:
+  - type: data
+    title: "Petroleum and international energy data (API v2)"
+    authors:
+      - name: "U.S. Energy Information Administration (EIA)"
+    url: "https://www.eia.gov/opendata/"
+  - type: article
+    title: "The role of inventories and speculative trading in the global market for crude oil"
+    authors:
+      - family-names: "Kilian"
+        given-names: "Lutz"
+      - family-names: "Murphy"
+        given-names: "Daniel P."
+    journal: "Journal of Applied Econometrics"
+    year: 2014
+    doi: "10.1002/jae.2322"
+  - type: article
+    title: "Energy markets and global economic conditions"
+    authors:
+      - family-names: "Baumeister"
+        given-names: "Christiane"
+      - family-names: "Korobilis"
+        given-names: "Dimitris"
+      - family-names: "Lee"
+        given-names: "Thomas K."
+    journal: "Review of Economics and Statistics"
+    year: 2022
+    doi: "10.1162/rest_a_00977"
+  - type: article
+    title: "Measuring geopolitical risk"
+    authors:
+      - family-names: "Caldara"
+        given-names: "Dario"
+      - family-names: "Iacoviello"
+        given-names: "Matteo"
+    journal: "American Economic Review"
+    year: 2022
+    doi: "10.1257/aer.20191823"
