@@ -1,6 +1,6 @@
 """Build a monthly oil market dataset from public sources.
 
-The dataset holds seven series used in oil market VARs (Kilian and Murphy 2014;
+The dataset holds eight series used in oil market VARs (Kilian and Murphy 2014;
 Baumeister and Hamilton 2019; Känzig 2021):
 
 - ``poil``: real refiners' acquisition cost of imported crude, 100*log.
@@ -10,6 +10,7 @@ Baumeister and Hamilton 2019; Känzig 2021):
 - ``igrea``: Kilian's index of global real economic activity.
 - ``wipi``: world (OECD+6) industrial production, 100*log.
 - ``gprh``: historical geopolitical risk index, 100*log.
+- ``etu``: energy transportation uncertainty index (Morão 2025), mean 100.
 
 Every source is downloaded to ``data/raw`` as a two-column CSV
 (``period,value``), and the dataset is rebuilt from those files only, so a
@@ -63,6 +64,10 @@ IGREA_URL = "https://www.dallasfed.org/-/media/Documents/research/igrea/igrea.xl
 WIP_URL = (
     "https://drive.google.com/uc?export=download&id=1i5gl07FbEUoWQrIdSpB_ZWBcNlZuxm0R"
 )
+#: Morão (2025) ETU index, maintained in the public etu_world repository.
+ETU_URL = (
+    "https://raw.githubusercontent.com/hmorao95/etu_world/main/data/processed/index.csv"
+)
 
 #: Raw file name -> EIA series id (``seriesid`` route).
 EIA_SERIES = {
@@ -86,6 +91,7 @@ RAW_FILES = (
     "weci",
     "kilian_igrea",
     "bh_world_ip",
+    "etu_world",
 )
 
 
@@ -249,6 +255,27 @@ def parse_dated_column(content: bytes) -> pd.Series:
     return _series(months, rows[1].tolist())
 
 
+def parse_etu(content: bytes) -> pd.Series:
+    """Read the equal-weight ETU index from ``etu_world``'s ``index.csv``.
+
+    Args:
+        content: The downloaded CSV (columns ``year``, ``month``,
+            ``standardized``, ``standardized weighted``).
+
+    Returns:
+        The column ``standardized``.
+
+    Raises:
+        SourceError: If the expected columns are missing.
+    """
+    d = pd.read_csv(io.BytesIO(content))
+    if not {"year", "month", "standardized"} <= set(d.columns):
+        msg = f"ETU file layout changed; columns are {list(d.columns)}."
+        raise SourceError(msg)
+    months = [f"{y}-{m:02d}" for y, m in zip(d["year"], d["month"], strict=True)]
+    return _series(months, d["standardized"].tolist())
+
+
 def _get(url: str) -> bytes:
     """Download a file.
 
@@ -337,6 +364,7 @@ FILE_SOURCES: dict[str, tuple[str, Callable[[bytes], pd.Series]]] = {
     "weci": (WECI_URL, parse_weci),
     "kilian_igrea": (IGREA_URL, parse_dated_column),
     "bh_world_ip": (WIP_URL, parse_dated_column),
+    "etu_world": (ETU_URL, parse_etu),
 }
 
 
@@ -404,7 +432,7 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
         raw_dir: Folder with the raw CSVs.
 
     Returns:
-        ``(data, levels)``: the seven VAR series, and the levels they come from.
+        ``(data, levels)``: the eight VAR series, and the levels they come from.
     """
     cpi = fill_months(read_raw("bls_cpi", raw_dir))
     rac = read_raw("eia_rac_imported", raw_dir)
@@ -418,6 +446,7 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
     weci = read_raw("weci", raw_dir)
     igrea = read_raw("kilian_igrea", raw_dir)
     world_ip = read_raw("bh_world_ip", raw_dir)
+    etu = read_raw("etu_world", raw_dir)
     levels = pd.DataFrame(
         {
             "rac_imported": rac,
@@ -428,6 +457,7 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
             "igrea": igrea,
             "world_ip": world_ip,
             "gprh": gprh,
+            "etu": etu,
         }
     )
     data = pd.DataFrame(
@@ -439,6 +469,7 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
             "igrea": igrea,
             "wipi": 100 * np.log(world_ip),
             "gprh": 100 * np.log(gprh),
+            "etu": etu,
         }
     )
     return _trim(data), _trim(levels)

@@ -1,7 +1,7 @@
 [project]
 name = "oil-market"
-version = "0.2.0"
-description = "Monthly oil market dataset (real oil price, world oil production, global crude inventories, WECI, Kilian index, world industrial production, geopolitical risk), 1974m1 onwards, built from public EIA, BLS, Baumeister, Dallas Fed and Caldara-Iacoviello data."
+version = "0.3.0"
+description = "Monthly oil market dataset (real oil price, world oil production, global crude inventories, WECI, Kilian index, world industrial production, geopolitical risk, energy transportation uncertainty), 1974m1 onwards, built from public EIA, BLS, Baumeister, Dallas Fed, Caldara-Iacoviello and ETU data."
 readme = "README.md"
 requires-python = ">=3.10"
 license = { text = "CC-BY-4.0" }

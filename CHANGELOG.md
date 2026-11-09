@@ -4,6 +4,13 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-11-09
+
+### Added
+
+- `etu`: energy transportation uncertainty index of Morão (2025), equal-weight
+  `standardized` series from the `etu_world` repository.
+
 ## [0.2.0] - 2026-11-09
 
 ### Added
