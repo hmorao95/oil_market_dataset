@@ -1,25 +1,25 @@
 cff-version: 1.2.0
 message: "If you use this dataset, please cite it as below, and cite the original sources listed in the README."
-title: "Oil market dataset: monthly real oil price, world oil production, global crude inventories, global activity and geopolitical risk, 1974m1–2026m10"
+title: "Oil market dataset: monthly real oil price, world oil production, global crude inventories, global activity, geopolitical risk and energy transportation uncertainty, 1974m1–2026m10"
 type: dataset
 authors:
   - family-names: "Morão"
     given-names: "Hugo"
-version: "0.2.0"
+version: "0.3.0"
 date-released: "2026-11-09"
 license: CC-BY-4.0
 repository-code: "https://github.com/hmorao95/oil_market_dataset"
 url: "https://github.com/hmorao95/oil_market_dataset"
 abstract: >-
-  Seven monthly series for oil market VARs, from January 1974: the real
+  Eight monthly series for oil market VARs, from January 1974: the real
   refiners' acquisition cost of imported crude oil, world crude oil
   production growth, the change in global crude oil inventories (Kilian and
   Murphy 2014), the world economic conditions indicator of Baumeister,
   Korobilis and Lee (2022), Kilian's (2009) index of global real economic
-  activity, OECD+6 industrial production (Baumeister and Hamilton 2019), and
-  the historical geopolitical risk index of Caldara and Iacoviello (2022).
-  Built from public EIA, BLS, Baumeister, Dallas Fed and Caldara-Iacoviello
-  data, with the Python code used to download and build it.
+  activity, OECD+6 industrial production (Baumeister and Hamilton 2019), the
+  historical geopolitical risk index of Caldara and Iacoviello (2022), and the
+  energy transportation uncertainty index of Morão (2025). Built from public
+  EIA, BLS, Baumeister, Dallas Fed, Caldara-Iacoviello and ETU data, with the Python code used to download and build it.
 keywords:
   - oil market
   - crude oil
@@ -83,3 +83,12 @@ references:
     journal: "American Economic Review"
     year: 2022
     doi: "10.1257/aer.20191823"
+  - type: article
+    title: "The economic effects of tensions in energy transportation"
+    authors:
+      - family-names: "Morão"
+        given-names: "Hugo"
+    journal: "Research in Transportation Economics"
+    volume: 112
+    year: 2025
+    doi: "10.1016/j.retrec.2025.101598"

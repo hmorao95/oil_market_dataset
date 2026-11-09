@@ -40,6 +40,7 @@ def write_raw(raw: Path, n: int = 24) -> None:
         "weci": rng / 10,
         "kilian_igrea": rng - 12,
         "bh_world_ip": 50 + rng,
+        "etu_world": 100 + 2 * rng,
     }
     for name, values in series.items():
         core.save_raw(name, pd.Series(values, index=idx), raw)
@@ -107,6 +108,7 @@ def test_build_formulas(tmp_path: Path) -> None:
     assert now["gecon"] == pytest.approx(lvl["weci"])
     assert now["igrea"] == pytest.approx(lvl["igrea"])
     assert now["wipi"] == pytest.approx(100 * np.log(lvl["world_ip"]))
+    assert now["etu"] == pytest.approx(lvl["etu"])
     assert data.index.name == "date"
     assert list(data.columns) == [
         "poil",
@@ -116,6 +118,7 @@ def test_build_formulas(tmp_path: Path) -> None:
         "igrea",
         "wipi",
         "gprh",
+        "etu",
     ]
 
 
@@ -196,6 +199,20 @@ def test_parse_dated_column_no_dates() -> None:
         core.parse_dated_column(xlsx(frame, header=False))
 
 
+def test_parse_etu_reads_equal_weight_column() -> None:
+    """The equal-weight ``standardized`` column is read, not the weighted one."""
+    csv = b"year,month,standardized,standardized weighted\n2026,8,165.5,168.0\n2026,9,339.0,324.4\n"
+    s = core.parse_etu(csv)
+    assert list(s.index.astype(str)) == ["2026-08", "2026-09"]
+    assert s.tolist() == [165.5, 339.0]
+
+
+def test_parse_etu_layout_change() -> None:
+    """A CSV without the expected columns raises SourceError."""
+    with pytest.raises(core.SourceError, match="ETU file layout changed"):
+        core.parse_etu(b"date,value\n2026-08,1\n")
+
+
 # --------------------------------------------------------------------------- #
 # download (HTTP faked)
 # --------------------------------------------------------------------------- #
@@ -263,6 +280,9 @@ def fake_get(url: str, params: dict[str, Any] | None = None, **_k: Any) -> FakeR
                 pd.DataFrame({"month": pd.to_datetime(["1988-01-01"]), "GPRH": [80.0]})
             )
         )
+    if url == core.ETU_URL:
+        etu = b"year,month,standardized,standardized weighted\n1988,1,90.5,88.0\n"
+        return FakeResponse(content=etu)
     if url in {core.IGREA_URL, core.WIP_URL}:
         dated = pd.DataFrame([["Date", None], [pd.Timestamp("1988-01-26"), 1.5]])
         return FakeResponse(content=xlsx(dated, header=False))

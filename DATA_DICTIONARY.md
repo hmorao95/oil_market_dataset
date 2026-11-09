@@ -66,9 +66,23 @@ file is revised and extended monthly.
 `100 · ln(GPRH_t)`, the historical geopolitical risk index of Caldara and
 Iacoviello (2022), from `data_gpr_export.xls` on matteoiacoviello.com.
 
+## `etu`: energy transportation uncertainty
+
+The energy transportation uncertainty index of Morão (2025), in levels: the
+monthly share of newspaper articles about disruptions to pipelines, tankers and
+terminals, averaged across sources with equal weights and normalized to a mean
+of 100 over 1969m1 onward. It is the `standardized` column of
+`data/processed/index.csv` in the public
+[`etu_world`](https://github.com/hmorao95/etu_world) repository
+(`data/raw/etu_world.csv`), which is updated monthly. The frozen series
+published with the paper (`etuindex_data.xlsx`, to 2025m11) is a different
+vintage. Nine months in 1974–1977 are exactly zero (no matching articles), so
+the series is kept in levels rather than logs.
+
 ## Revisions
 
 EIA revises recent production and stock data, Baumeister revises the whole
 WECI history and the world IP series, Kilian's index is re-detrended at each
-update, and BLS revises seasonal factors. A rebuild on a later date will
+update, the ETU index is renormalized as months are added, and BLS revises
+seasonal factors. A rebuild on a later date will
 differ from an earlier one in those places.

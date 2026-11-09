@@ -17,17 +17,18 @@ Kilian and Murphy (2014) and Känzig (2021).
 | `igrea` | index of global real economic activity | index (detrended, %) | Kilian (2009), Dallas Fed |
 | `wipi` | world industrial production (OECD + 6 major non-OECD) | 100·ln | Baumeister and Hamilton (2019) |
 | `gprh` | historical geopolitical risk index | 100·ln | Caldara and Iacoviello (2022) |
+| `etu` | energy transportation uncertainty index | index, mean 100 since 1969 | Morão (2025), [`etu_world`](https://github.com/hmorao95/etu_world) |
 
 See [DATA_DICTIONARY.md](DATA_DICTIONARY.md) for exact construction and caveats.
 
 ## Files
 
-- `outputs/oil_market.csv`: the seven series (`date` as `YYYY-MM`).
+- `outputs/oil_market.csv`: the eight series (`date` as `YYYY-MM`).
 - `outputs/oil_market.xlsx`: sheet `data` with BEAR-style dates (`1977m1`), ready
   for the BEAR toolbox, and sheet `levels`.
 - `outputs/oil_market_levels.csv`: the levels behind them (nominal RAC, CPI,
   world crude production in kb/d, global crude stocks in mb, WECI, igrea,
-  world IP, GPRH).
+  world IP, GPRH, ETU).
 - `data/raw/`: every source as a `period,value` CSV, as downloaded.
 
 Series end at different months (ragged edge); missing months are blank.
@@ -84,6 +85,8 @@ Cite the dataset with [CITATION.cff](CITATION.cff), and cite the original source
 - Kilian, L. and D. P. Murphy (2014), "The role of inventories and speculative
   trading in the global market for crude oil", *Journal of Applied
   Econometrics* 29(3), 454–478.
+- Morão, H. (2025), "The economic effects of tensions in energy transportation",
+  *Research in Transportation Economics* 112, 101598.
 - U.S. Energy Information Administration and U.S. Bureau of Labor Statistics.
 
 ## License
