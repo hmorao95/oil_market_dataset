@@ -45,6 +45,22 @@ The column "Standardized GECON" of `GECON_indicator.xlsx` from Christiane
 Baumeister's datasets page (Baumeister, Korobilis and Lee 2022). The indicator
 is re-estimated every month, so past values change with each vintage.
 
+## `igrea`: global real economic activity
+
+Kilian's (2009) index of global real economic activity, in levels: a
+cumulated, deflated and detrended index of dry-bulk ocean shipping rates, from
+`igrea.xlsx` on the Federal Reserve Bank of Dallas website
+(`data/raw/kilian_igrea.csv`). The detrending is redone on the full sample at
+each update, so the whole history changes slightly with each vintage.
+
+## `wipi`: world industrial production
+
+`100 · ln(IP_t)`, industrial production of the OECD plus six major non-OECD
+economies (Brazil, China, India, Indonesia, Russia, South Africa), from
+Baumeister and Hamilton (2019), `OECD_plus6_industrial_production.xlsx` on
+Christiane Baumeister's datasets page (`data/raw/bh_world_ip.csv`). The source
+file is revised and extended monthly.
+
 ## `gprh`: geopolitical risk
 
 `100 · ln(GPRH_t)`, the historical geopolitical risk index of Caldara and
@@ -53,5 +69,6 @@ Iacoviello (2022), from `data_gpr_export.xls` on matteoiacoviello.com.
 ## Revisions
 
 EIA revises recent production and stock data, Baumeister revises the whole
-WECI history, and BLS revises seasonal factors. A rebuild on a later date will
+WECI history and the world IP series, Kilian's index is re-detrended at each
+update, and BLS revises seasonal factors. A rebuild on a later date will
 differ from an earlier one in those places.

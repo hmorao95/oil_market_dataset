@@ -2,7 +2,7 @@
 Public package interface for :mod:`oil_market`.
 
 This package downloads and builds a monthly oil market dataset (real oil price,
-world oil production, global crude inventories, global economic conditions and
+world oil production, global crude inventories, global economic activity and
 geopolitical risk) from public sources. The implementation lives in
 :mod:`oil_market.core`; the names most callers need are re-exported here.
 
@@ -15,6 +15,7 @@ Exports:
     fetch_bls_cpi: Fetch the CPI from the BLS API.
     parse_gprh: Read GPRH from the Caldara-Iacoviello file.
     parse_weci: Read the standardized WECI from Baumeister's file.
+    parse_dated_column: Read a date/value sheet (igrea, world IP).
     global_crude_stocks: Kilian-Murphy global crude inventory proxy.
     fill_months: Log-linear fill of missing months.
     SourceError: Raised when a source fails.
@@ -35,6 +36,7 @@ from oil_market.core import (
     fill_months,
     global_crude_stocks,
     main,
+    parse_dated_column,
     parse_gprh,
     parse_weci,
     read_output,
@@ -53,6 +55,7 @@ __all__ = [
     "fill_months",
     "global_crude_stocks",
     "main",
+    "parse_dated_column",
     "parse_gprh",
     "parse_weci",
     "read_output",

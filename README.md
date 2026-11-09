@@ -14,17 +14,20 @@ Kilian and Murphy (2014) and Känzig (2021).
 | `oilprod` | world crude oil production growth | 100·Δln | EIA international (crude incl. lease condensate) |
 | `oilstocks` | change in global crude oil inventories | million barrels | EIA, Kilian and Murphy (2014) |
 | `gecon` | world economic conditions indicator (WECI) | standardized | Baumeister, Korobilis and Lee (2022) |
+| `igrea` | index of global real economic activity | index (detrended, %) | Kilian (2009), Dallas Fed |
+| `wipi` | world industrial production (OECD + 6 major non-OECD) | 100·ln | Baumeister and Hamilton (2019) |
 | `gprh` | historical geopolitical risk index | 100·ln | Caldara and Iacoviello (2022) |
 
 See [DATA_DICTIONARY.md](DATA_DICTIONARY.md) for exact construction and caveats.
 
 ## Files
 
-- `outputs/oil_market.csv`: the five series (`date` as `YYYY-MM`).
+- `outputs/oil_market.csv`: the seven series (`date` as `YYYY-MM`).
 - `outputs/oil_market.xlsx`: sheet `data` with BEAR-style dates (`1977m1`), ready
   for the BEAR toolbox, and sheet `levels`.
 - `outputs/oil_market_levels.csv`: the levels behind them (nominal RAC, CPI,
-  world crude production in kb/d, global crude stocks in mb, WECI, GPRH).
+  world crude production in kb/d, global crude stocks in mb, WECI, igrea,
+  world IP, GPRH).
 - `data/raw/`: every source as a `period,value` CSV, as downloaded.
 
 Series end at different months (ragged edge); missing months are blank.
@@ -70,8 +73,14 @@ Cite the dataset with [CITATION.cff](CITATION.cff), and cite the original source
 
 - Baumeister, C., D. Korobilis and T. K. Lee (2022), "Energy markets and global
   economic conditions", *Review of Economics and Statistics* 104(4), 828–844.
+- Baumeister, C. and J. D. Hamilton (2019), "Structural interpretation of vector
+  autoregressions with incomplete identification: Revisiting the role of oil
+  supply and demand shocks", *American Economic Review* 109(5), 1873–1910.
 - Caldara, D. and M. Iacoviello (2022), "Measuring geopolitical risk",
   *American Economic Review* 112(4), 1194–1225.
+- Kilian, L. (2009), "Not all oil price shocks are alike: Disentangling demand
+  and supply shocks in the crude oil market", *American Economic Review* 99(3),
+  1053–1069.
 - Kilian, L. and D. P. Murphy (2014), "The role of inventories and speculative
   trading in the global market for crude oil", *Journal of Applied
   Econometrics* 29(3), 454–478.

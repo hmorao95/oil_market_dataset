@@ -1,12 +1,14 @@
 """Build a monthly oil market dataset from public sources.
 
-The dataset holds five series used in oil market VARs (Kilian and Murphy 2014;
+The dataset holds seven series used in oil market VARs (Kilian and Murphy 2014;
 Baumeister and Hamilton 2019; Känzig 2021):
 
 - ``poil``: real refiners' acquisition cost of imported crude, 100*log.
 - ``oilprod``: world crude oil production growth, 100*dlog.
 - ``oilstocks``: change in global crude oil inventories, million barrels.
 - ``gecon``: world economic conditions indicator (WECI), standardized.
+- ``igrea``: Kilian's index of global real economic activity.
+- ``wipi``: world (OECD+6) industrial production, 100*log.
 - ``gprh``: historical geopolitical risk index, 100*log.
 
 Every source is downloaded to ``data/raw`` as a two-column CSV
@@ -27,12 +29,17 @@ import logging
 import os
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import fire
 import numpy as np
 import pandas as pd
 import requests
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = logging.getLogger(__name__)
 
@@ -50,6 +57,12 @@ GPR_URL = "https://www.matteoiacoviello.com/gpr_files/data_gpr_export.xls"
 WECI_URL = (
     "https://drive.google.com/uc?export=download&id=1-xGp5-PvgjoAcDQuw09nq4Kgoj16hqsu"
 )
+#: Kilian's index, hosted by the Dallas Fed.
+IGREA_URL = "https://www.dallasfed.org/-/media/Documents/research/igrea/igrea.xlsx"
+#: Baumeister and Hamilton (2019) OECD+6 industrial production.
+WIP_URL = (
+    "https://drive.google.com/uc?export=download&id=1i5gl07FbEUoWQrIdSpB_ZWBcNlZuxm0R"
+)
 
 #: Raw file name -> EIA series id (``seriesid`` route).
 EIA_SERIES = {
@@ -65,7 +78,15 @@ EIA_INTL = {
 BLS_CPI = "CUSR0000SA0"  # CPI-U, all items, seasonally adjusted, 1982-84=100
 OECD_START = "1988-01"  # EIA OECD stocks have gaps and a level break before this
 
-RAW_FILES = (*EIA_SERIES, *EIA_INTL, "bls_cpi", "gpr_gprh", "weci")
+RAW_FILES = (
+    *EIA_SERIES,
+    *EIA_INTL,
+    "bls_cpi",
+    "gpr_gprh",
+    "weci",
+    "kilian_igrea",
+    "bh_world_ip",
+)
 
 
 class SourceError(RuntimeError):
@@ -203,6 +224,31 @@ def parse_weci(content: bytes) -> pd.Series:
     return _series(months, rows[col].tolist())
 
 
+def parse_dated_column(content: bytes) -> pd.Series:
+    """Read a sheet whose first column is a date and second a value.
+
+    Used for Kilian's ``igrea.xlsx`` and Baumeister and Hamilton's
+    ``OECD_plus6_industrial_production.xlsx``. Dates are reduced to months, since
+    the igrea file mixes first-of-month and mid-month dates.
+
+    Args:
+        content: The downloaded file.
+
+    Returns:
+        The monthly series.
+
+    Raises:
+        SourceError: If the file has no dated rows.
+    """
+    d = pd.read_excel(io.BytesIO(content), header=None).iloc[:, :2]
+    rows = d[d[0].map(lambda v: isinstance(v, datetime))]  # skips header text
+    if rows.empty:
+        msg = "No dated rows found; the file layout changed."
+        raise SourceError(msg)
+    months = [f"{v.year}-{v.month:02d}" for v in rows[0]]
+    return _series(months, rows[1].tolist())
+
+
 def _get(url: str) -> bytes:
     """Download a file.
 
@@ -281,9 +327,17 @@ def _fetch(name: str) -> pd.Series:
         )
     if name == "bls_cpi":
         return fetch_bls_cpi()
-    if name == "gpr_gprh":
-        return parse_gprh(_get(GPR_URL))
-    return parse_weci(_get(WECI_URL))
+    url, parse = FILE_SOURCES[name]
+    return parse(_get(url))
+
+
+#: Raw file name -> (URL, parser) for sources downloaded as files.
+FILE_SOURCES: dict[str, tuple[str, Callable[[bytes], pd.Series]]] = {
+    "gpr_gprh": (GPR_URL, parse_gprh),
+    "weci": (WECI_URL, parse_weci),
+    "kilian_igrea": (IGREA_URL, parse_dated_column),
+    "bh_world_ip": (WIP_URL, parse_dated_column),
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -350,7 +404,7 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
         raw_dir: Folder with the raw CSVs.
 
     Returns:
-        ``(data, levels)``: the five VAR series, and the levels they come from.
+        ``(data, levels)``: the seven VAR series, and the levels they come from.
     """
     cpi = fill_months(read_raw("bls_cpi", raw_dir))
     rac = read_raw("eia_rac_imported", raw_dir)
@@ -362,6 +416,8 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
     )
     gprh = read_raw("gpr_gprh", raw_dir)
     weci = read_raw("weci", raw_dir)
+    igrea = read_raw("kilian_igrea", raw_dir)
+    world_ip = read_raw("bh_world_ip", raw_dir)
     levels = pd.DataFrame(
         {
             "rac_imported": rac,
@@ -369,6 +425,8 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
             "world_crude_kbd": world,
             "global_crude_stocks_mb": stocks,
             "weci": weci,
+            "igrea": igrea,
+            "world_ip": world_ip,
             "gprh": gprh,
         }
     )
@@ -378,6 +436,8 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
             "oilprod": 100 * np.log(world).diff(),
             "oilstocks": stocks.diff(),
             "gecon": weci,
+            "igrea": igrea,
+            "wipi": 100 * np.log(world_ip),
             "gprh": 100 * np.log(gprh),
         }
     )
@@ -447,11 +507,24 @@ def read_output(path: Path = OUT_DIR / "oil_market.csv") -> pd.DataFrame:
 # --------------------------------------------------------------------------- #
 # CLI
 # --------------------------------------------------------------------------- #
+def _skip_names(skip: str | tuple[str, ...] | list[str]) -> tuple[str, ...]:
+    """Normalize ``--skip``, which python-fire passes as a tuple for ``a,b``.
+
+    Args:
+        skip: Names as a comma- or space-separated string, or a sequence.
+
+    Returns:
+        The names.
+    """
+    parts = skip if isinstance(skip, str) else ",".join(map(str, skip))
+    return tuple(s for s in re.split(r"[,\s]+", parts) if s)
+
+
 class _Cli:
     """Oil market dataset: ``download``, ``build`` or ``refresh``."""
 
     def download(  # ruff: ignore[no-self-use] - python-fire exposes methods
-        self, raw_dir: str = str(RAW_DIR), skip: str = ""
+        self, raw_dir: str = str(RAW_DIR), skip: str | tuple[str, ...] = ""
     ) -> str:
         """Download every source to ``raw_dir``.
 
@@ -461,8 +534,15 @@ class _Cli:
 
         Returns:
             The files written.
+
+        Raises:
+            SourceError: If ``skip`` names a file that does not exist.
         """
-        names = tuple(s.strip() for s in re.split(r"[,\s]+", skip) if s.strip())
+        names = _skip_names(skip)
+        unknown = sorted(set(names) - set(RAW_FILES))
+        if unknown:
+            msg = f"Unknown --skip names {unknown}; choose from {list(RAW_FILES)}."
+            raise SourceError(msg)
         return "\n".join(str(p) for p in download(Path(raw_dir), skip=names))
 
     def build(  # ruff: ignore[no-self-use] - python-fire exposes methods
@@ -486,7 +566,10 @@ class _Cli:
         return "\n".join([*map(str, paths), "", *cover])
 
     def refresh(
-        self, raw_dir: str = str(RAW_DIR), out_dir: str = str(OUT_DIR), skip: str = ""
+        self,
+        raw_dir: str = str(RAW_DIR),
+        out_dir: str = str(OUT_DIR),
+        skip: str | tuple[str, ...] = "",
     ) -> str:
         """Download, then build.
 
