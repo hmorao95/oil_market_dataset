@@ -36,6 +36,7 @@ def write_raw(raw: Path, n: int = 24) -> None:
         "eia_oecd_stocks": 3000 + 5 * rng,
         "eia_us_crude_stocks": 800000 + 1000 * rng,
         "eia_us_petroleum_stocks": 1600000 + 1000 * rng,
+        "eia_us_spr_stocks": 500000 + 2000 * rng,
         "gpr_gprh": 90 + rng,
         "weci": rng / 10,
         "kilian_igrea": rng - 12,
@@ -104,6 +105,9 @@ def test_build_formulas(tmp_path: Path) -> None:
     assert now["oilprod"] == pytest.approx(100 * np.log(growth))
     change = lvl["global_crude_stocks_mb"] - lag["global_crude_stocks_mb"]
     assert now["oilstocks"] == pytest.approx(change)
+    spr_change = lvl["spr_stocks_mb"] - lag["spr_stocks_mb"]
+    assert now["sprstocks"] == pytest.approx(spr_change)
+    assert lvl["spr_stocks_mb"] == pytest.approx((500000 + 2000 * 15) / 1000)
     assert now["gprh"] == pytest.approx(100 * np.log(lvl["gprh"]))
     assert now["gecon"] == pytest.approx(lvl["weci"])
     assert now["igrea"] == pytest.approx(lvl["igrea"])
@@ -114,6 +118,7 @@ def test_build_formulas(tmp_path: Path) -> None:
         "poil",
         "oilprod",
         "oilstocks",
+        "sprstocks",
         "gecon",
         "igrea",
         "wipi",
