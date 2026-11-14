@@ -11,6 +11,15 @@ All notable changes to this project are documented here. The format follows
 - Cite each EIA series (title, series ID, URL, access date) and the BLS CPI
   in the README and `CITATION.cff`, instead of one generic EIA entry.
 
+### Fixed
+
+- On Windows, a clone whose path has non-ASCII characters (such as
+  `C:\Users\João\...`) left `oil_market` unimportable when `uv sync` built the
+  environment on Python 3.10 or 3.11, which read the editable install's `.pth`
+  file in the ANSI code page. The development environment now defaults to
+  Python 3.12 (`.python-version`), which reads it as UTF-8. CI still runs the
+  checks on 3.10. The README gives workarounds for 3.10 and 3.11.
+
 ## [0.4.0] - 2026-11-14
 
 ### Added

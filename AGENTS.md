@@ -27,9 +27,16 @@ uv run oil-market build              # offline, from data/raw
 uv run oil-market refresh            # needs EIA_API_KEY
 ```
 
-On a machine whose user path has non-ASCII characters, uv's editable install
-may not be importable; `pytest` is unaffected (`pythonpath = ["src"]`), and
-`PYTHONPATH=src uv run python -m oil_market ...` works.
+`.python-version` pins the local environment to Python 3.12, the oldest version
+that reads `.pth` files as UTF-8. On Windows, 3.10 and 3.11 read them in the
+ANSI code page, so the editable install breaks when the clone's path has
+non-ASCII characters and `import oil_market` fails. The supported floor is
+still 3.10: CI runs the checks there by setting `UV_PYTHON` for the job. Keep
+that variable. A `--python` flag on `uv sync` alone does not hold, because the
+next `uv run` reads `.python-version` and rebuilds `.venv` on 3.12.
+
+On 3.10 or 3.11, `pytest` still works (`pythonpath = ["src"]`), and so does
+`PYTHONPATH=src uv run python -m oil_market ...`.
 
 ## Quality gate (must pass before every commit)
 
