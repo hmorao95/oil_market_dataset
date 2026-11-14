@@ -29,10 +29,61 @@ keywords:
   - time series
 references:
   - type: data
-    title: "Petroleum and international energy data (API v2)"
+    title: "U.S. Crude Oil Imported Acquisition Cost by Refiners (Dollars per Barrel)"
     authors:
       - name: "U.S. Energy Information Administration (EIA)"
-    url: "https://www.eia.gov/opendata/"
+    year: 2026
+    url: "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=R1300____3&f=M"
+    date-accessed: "2026-11-09"
+    notes: "Series PET.R1300____3.M. Used for poil."
+  - type: data
+    title: "U.S. Ending Stocks of Crude Oil (Thousand Barrels)"
+    authors:
+      - name: "U.S. Energy Information Administration (EIA)"
+    year: 2026
+    url: "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MCRSTUS1&f=M"
+    date-accessed: "2026-11-09"
+    notes: "Series PET.MCRSTUS1.M. Used for oilstocks."
+  - type: data
+    title: "U.S. Ending Stocks of Crude Oil and Petroleum Products (Thousand Barrels)"
+    authors:
+      - name: "U.S. Energy Information Administration (EIA)"
+    year: 2026
+    url: "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MTTSTUS1&f=M"
+    date-accessed: "2026-11-09"
+    notes: "Series PET.MTTSTUS1.M. Used for oilstocks."
+  - type: data
+    title: "U.S. Ending Stocks of Crude Oil in SPR (Thousand Barrels)"
+    authors:
+      - name: "U.S. Energy Information Administration (EIA)"
+    year: 2026
+    url: "https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MCSSTUS1&f=M"
+    date-accessed: "2026-11-14"
+    notes: "Series PET.MCSSTUS1.M. Used for sprstocks."
+  - type: data
+    title: "International Energy Statistics: Crude oil including lease condensate, production, World, monthly (thousand barrels per day)"
+    authors:
+      - name: "U.S. Energy Information Administration (EIA)"
+    year: 2026
+    url: "https://www.eia.gov/international/data/world"
+    date-accessed: "2026-11-09"
+    notes: "EIA API v2, international data. Used for oilprod."
+  - type: data
+    title: "International Energy Statistics: Petroleum and other liquids, stocks, OECD, monthly (million barrels)"
+    authors:
+      - name: "U.S. Energy Information Administration (EIA)"
+    year: 2026
+    url: "https://www.eia.gov/international/data/world"
+    date-accessed: "2026-11-09"
+    notes: "EIA API v2, international data. Used for oilstocks."
+  - type: data
+    title: "Consumer Price Index for All Urban Consumers: All Items in U.S. City Average, Seasonally Adjusted"
+    authors:
+      - name: "U.S. Bureau of Labor Statistics (BLS)"
+    year: 2026
+    url: "https://data.bls.gov/timeseries/CUSR0000SA0"
+    date-accessed: "2026-11-09"
+    notes: "Series CUSR0000SA0. Used to deflate poil."
   - type: article
     title: "The role of inventories and speculative trading in the global market for crude oil"
     authors:

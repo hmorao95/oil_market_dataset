@@ -55,8 +55,9 @@ wrong for a case, add a narrowly-scoped ignore with a comment explaining why.
   was not rebuilt: commit both together.
 - The keyless BLS API allows 25 calls a day. If it is used up, run
   `refresh --skip bls_cpi` to keep the committed CPI.
-- A data update bumps the minor version and updates the coverage period in
-  `CITATION.cff` (title) and the repository's About description.
+- A data update bumps the minor version, updates the coverage period in
+  `CITATION.cff` (title), the EIA/BLS access dates in `CITATION.cff` and the
+  README citation list, and the repository's About description.
 - Construction follows Kilian and Murphy (2014); do not change a series'
   definition without recording it in `DATA_DICTIONARY.md` and the changelog.
 
