@@ -91,7 +91,30 @@ Cite the dataset with [CITATION.cff](CITATION.cff), and cite the original source
   673–691.
 - Morão, H. (2025), "The economic effects of tensions in energy transportation",
   *Research in Transportation Economics* 112, 101598.
-- U.S. Energy Information Administration and U.S. Bureau of Labor Statistics.
+
+Data series:
+
+- U.S. Energy Information Administration (2026), "U.S. Crude Oil Imported Acquisition Cost by Refiners (Dollars per Barrel)", series PET.R1300____3.M,
+  <https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=R1300____3&f=M>, accessed 9 November 2026 (`poil`).
+- U.S. Energy Information Administration (2026), "U.S. Ending Stocks of Crude Oil (Thousand Barrels)", series PET.MCRSTUS1.M,
+  <https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MCRSTUS1&f=M>, accessed 9 November 2026 (`oilstocks`).
+- U.S. Energy Information Administration (2026), "U.S. Ending Stocks of Crude Oil and Petroleum Products (Thousand Barrels)", series PET.MTTSTUS1.M,
+  <https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MTTSTUS1&f=M>, accessed 9 November 2026 (`oilstocks`).
+- U.S. Energy Information Administration (2026), "U.S. Ending Stocks of Crude Oil in SPR (Thousand Barrels)", series PET.MCSSTUS1.M,
+  <https://www.eia.gov/dnav/pet/hist/LeafHandler.ashx?n=PET&s=MCSSTUS1&f=M>, accessed 14 November 2026 (`sprstocks`).
+- U.S. Energy Information Administration (2026), "International Energy Statistics: Crude oil including lease condensate, production, World, monthly (thousand barrels per day)",
+  <https://www.eia.gov/international/data/world>, accessed 9 November 2026 (`oilprod`).
+- U.S. Energy Information Administration (2026), "International Energy Statistics: Petroleum and other liquids, stocks, OECD, monthly (million barrels)",
+  <https://www.eia.gov/international/data/world>, accessed 9 November 2026 (`oilstocks`).
+- U.S. Bureau of Labor Statistics (2026), "Consumer Price Index for All Urban
+  Consumers: All Items in U.S. City Average, Seasonally Adjusted", series
+  CUSR0000SA0, <https://data.bls.gov/timeseries/CUSR0000SA0>, accessed
+  9 November 2026 (`poil`).
+
+EIA series use the EIA API v2 (<https://www.eia.gov/opendata/>); the
+international series are queried by product, activity and region (see
+[DATA_DICTIONARY.md](DATA_DICTIONARY.md)). Access dates are the dates of the
+committed `data/raw/` files.
 
 ## License
 
