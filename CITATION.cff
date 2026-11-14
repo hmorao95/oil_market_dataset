@@ -5,16 +5,16 @@ type: dataset
 authors:
   - family-names: "Morão"
     given-names: "Hugo"
-version: "0.3.0"
-date-released: "2026-11-09"
+version: "0.4.0"
+date-released: "2026-11-14"
 license: CC-BY-4.0
 repository-code: "https://github.com/hmorao95/oil_market_dataset"
 url: "https://github.com/hmorao95/oil_market_dataset"
 abstract: >-
-  Eight monthly series for oil market VARs, from January 1974: the real
+  Nine monthly series for oil market VARs, from January 1974: the real
   refiners' acquisition cost of imported crude oil, world crude oil
   production growth, the change in global crude oil inventories (Kilian and
-  Murphy 2014), the world economic conditions indicator of Baumeister,
+  Murphy 2014), the change in US Strategic Petroleum Reserve stocks, the world economic conditions indicator of Baumeister,
   Korobilis and Lee (2022), Kilian's (2009) index of global real economic
   activity, OECD+6 industrial production (Baumeister and Hamilton 2019), the
   historical geopolitical risk index of Caldara and Iacoviello (2022), and the
@@ -43,6 +43,16 @@ references:
     journal: "Journal of Applied Econometrics"
     year: 2014
     doi: "10.1002/jae.2322"
+  - type: article
+    title: "Does drawing down the US Strategic Petroleum Reserve help stabilize oil prices?"
+    authors:
+      - family-names: "Kilian"
+        given-names: "Lutz"
+      - family-names: "Zhou"
+        given-names: "Xiaoqing"
+    journal: "Journal of Applied Econometrics"
+    year: 2020
+    doi: "10.1002/jae.2798"
   - type: article
     title: "Energy markets and global economic conditions"
     authors:

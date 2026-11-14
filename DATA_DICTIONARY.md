@@ -37,7 +37,18 @@ All series are monthly, from 1974m1. Raw inputs are in `data/raw/` as
 - `USTOTAL`: US stocks of crude oil and petroleum products including the SPR.
   EIA `PET.MTTSTUS1.M` (Datastream EIA1541).
 
-The OECD series corresponds to Datastream EIA1976.
+The OECD series corresponds to Datastream EIA1976. Because `USCRUDE` includes
+the SPR, `oilstocks` includes SPR changes, as in Kilian and Zhou (2020).
+
+## `sprstocks`: change in US SPR stocks
+
+`SPR_t − SPR_{t−1}`, million barrels, where `SPR` is US ending stocks of crude
+oil in the Strategic Petroleum Reserve, EIA `PET.MCSSTUS1.M`
+(`data/raw/eia_us_spr_stocks.csv`). The EIA series starts in 1977m10, the month
+of the first fill, so `sprstocks` starts in 1977m11; earlier months are blank,
+not zero. The level is `spr_stocks_mb` in the levels file. Kilian and Zhou
+(2020) use this change, together with `oilstocks`, to identify SPR policy
+shocks.
 
 ## `gecon`: world economic conditions
 

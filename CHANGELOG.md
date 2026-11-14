@@ -4,6 +4,14 @@ All notable changes to this project are documented here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and the project uses
 [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-11-14
+
+### Added
+
+- `sprstocks`: monthly change in US SPR crude stocks (EIA `PET.MCSSTUS1.M`),
+  million barrels, from 1977m11; the level is `spr_stocks_mb` in the levels
+  file.
+
 ## [0.3.0] - 2026-11-09
 
 ### Added

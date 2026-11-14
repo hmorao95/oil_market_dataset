@@ -5,10 +5,10 @@ may find it useful too.
 
 ## What this is
 
-`oil_market_dataset` publishes eight monthly oil market series for structural
-VARs (`poil`, `oilprod`, `oilstocks`, `gecon`, `igrea`, `wipi`, `gprh`, `etu`,
-from 1974m1), plus the small, typed Python package `oil_market` that downloads the
-sources and builds them, with a python-fire CLI.
+`oil_market_dataset` publishes nine monthly oil market series for structural
+VARs (`poil`, `oilprod`, `oilstocks`, `sprstocks`, `gecon`, `igrea`, `wipi`,
+`gprh`, `etu`, from 1974m1), plus the small, typed Python package `oil_market`
+that downloads the sources and builds them, with a python-fire CLI.
 
 Layout:
 

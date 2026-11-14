@@ -1,11 +1,12 @@
 """Build a monthly oil market dataset from public sources.
 
-The dataset holds eight series used in oil market VARs (Kilian and Murphy 2014;
+The dataset holds nine series used in oil market VARs (Kilian and Murphy 2014;
 Baumeister and Hamilton 2019; Känzig 2021):
 
 - ``poil``: real refiners' acquisition cost of imported crude, 100*log.
 - ``oilprod``: world crude oil production growth, 100*dlog.
 - ``oilstocks``: change in global crude oil inventories, million barrels.
+- ``sprstocks``: change in US Strategic Petroleum Reserve stocks, million barrels.
 - ``gecon``: world economic conditions indicator (WECI), standardized.
 - ``igrea``: Kilian's index of global real economic activity.
 - ``wipi``: world (OECD+6) industrial production, 100*log.
@@ -74,6 +75,7 @@ EIA_SERIES = {
     "eia_rac_imported": "PET.R1300____3.M",  # $/bbl
     "eia_us_crude_stocks": "PET.MCRSTUS1.M",  # thousand bbl, incl. SPR
     "eia_us_petroleum_stocks": "PET.MTTSTUS1.M",  # thousand bbl, incl. SPR
+    "eia_us_spr_stocks": "PET.MCSSTUS1.M",  # thousand bbl, SPR crude, from 1977m10
 }
 #: Raw file name -> EIA international facets (product, activity, region, unit).
 EIA_INTL = {
@@ -432,7 +434,7 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
         raw_dir: Folder with the raw CSVs.
 
     Returns:
-        ``(data, levels)``: the eight VAR series, and the levels they come from.
+        ``(data, levels)``: the nine VAR series, and the levels they come from.
     """
     cpi = fill_months(read_raw("bls_cpi", raw_dir))
     rac = read_raw("eia_rac_imported", raw_dir)
@@ -447,12 +449,14 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
     igrea = read_raw("kilian_igrea", raw_dir)
     world_ip = read_raw("bh_world_ip", raw_dir)
     etu = read_raw("etu_world", raw_dir)
+    spr = read_raw("eia_us_spr_stocks", raw_dir) / 1000
     levels = pd.DataFrame(
         {
             "rac_imported": rac,
             "cpi": cpi,
             "world_crude_kbd": world,
             "global_crude_stocks_mb": stocks,
+            "spr_stocks_mb": spr,
             "weci": weci,
             "igrea": igrea,
             "world_ip": world_ip,
@@ -465,6 +469,7 @@ def build(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, pd.DataFrame]:
             "poil": 100 * np.log(rac / cpi * 100),
             "oilprod": 100 * np.log(world).diff(),
             "oilstocks": stocks.diff(),
+            "sprstocks": spr.diff(),
             "gecon": weci,
             "igrea": igrea,
             "wipi": 100 * np.log(world_ip),
